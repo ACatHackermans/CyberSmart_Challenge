@@ -1,19 +1,21 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <cmath>
 
 using namespace sf;
 
 float calculateDistance (const Vector2f& point1, const Vector2f& point2)
 {
-    float distanceX = point2.x - point1.x + 70;
-    float distanceY = point2.y - point1.y + 70;
+    float distanceX = point2.x - point1.x + 100;
+    float distanceY = point2.y - point1.y + 100;
     return sqrt(distanceX * distanceX + distanceY * distanceY);
 }
 
 int main()
 {
-    RenderWindow window(VideoMode(1920, 1080), "CyberSmart Challenge", Style::Fullscreen);
-    bool menu = true;
+    Music music1;
+    RenderWindow window(VideoMode(1920, 1080), "CyberSmart Challenge", Style::Default);
+    bool startMenu = true, playMenu = false, settingsMenu = false, infoMenu = false;
     bool easy = false, hard = false;
 
     Texture close_button, play_button, settings_button, info_button, back_button, background1, easy_button, hard_button;
@@ -25,10 +27,10 @@ int main()
         return 0;
     }
 
-    Sprite closebutton(close_button), playbutton(play_button), settingsbutton(settings_button), infobutton(info_button), bg1(background1)
-    , backbutton(back_button), easybutton(easy_button), hardbutton(hard_button);
+    Sprite closebutton(close_button), playbutton(play_button), settingsbutton(settings_button), infobutton(info_button), bg1(background1), 
+    backbutton(back_button), easybutton(easy_button), hardbutton(hard_button);
 
-    // Start menu
+    // Start startMenu
     closebutton.setScale(0.15, 0.15);
     closebutton.setPosition(Vector2f(100, 50));
     playbutton.setScale(0.15, 0.15);
@@ -38,13 +40,21 @@ int main()
     infobutton.setScale(0.15, 0.15);
     infobutton.setPosition(Vector2f(1520, 830));
 
-    // Select difficulty menu
+    // Select difficulty startMenu
     backbutton.setScale(0.15, 0.15);
     backbutton.setPosition(Vector2f(100, 50));
     easybutton.setScale(0.2, 0.2);
     easybutton.setPosition(Vector2f(400, 500));
     hardbutton.setScale(0.2, 0.2);
     hardbutton.setPosition(Vector2f(1000, 500));
+
+    if (!music1.openFromFile("resources/music1.wav"))
+        {
+            return 0;
+        }
+
+    music1.play();
+    music1.setLoop(true);    
 
     while (window.isOpen())
     {    
@@ -64,14 +74,22 @@ int main()
                 {  
                     window.close();
                 }
+                else if (event.key.code == Keyboard::M)
+                {  
+                    music1.setVolume(0);
+                }
+                else if (event.key.code == Keyboard::N)
+                {  
+                    music1.setVolume(100);
+                }
                 break;   
 
             case Event::MouseButtonPressed:
                 if (event.mouseButton.button == Mouse::Left)
                 {
-                    float closestDistance = 50;
+                    float closestDistance = 100;
 
-                    if (menu == true)
+                    if (startMenu == true)
                     {    
                         if (calculateDistance(mousePosition, closebutton.getPosition()) < closestDistance)
                         {
@@ -79,22 +97,28 @@ int main()
                         }
                         if (calculateDistance(mousePosition, playbutton.getPosition()) < closestDistance)
                         {
-                            menu = false;
+                            startMenu = false;
+                            playMenu = true;
                         }
                         if (calculateDistance(mousePosition, settingsbutton.getPosition()) < closestDistance)
                         {
-                            // Settings menu
+                            startMenu = false;
+                            settingsMenu = true;
                         }
                         if (calculateDistance(mousePosition, infobutton.getPosition()) < closestDistance)
                         {
-                            // Info menu
+                            startMenu = false;
+                            infoMenu = true;
                         }
                     }
-                    else if (menu != true)
+                    else if (startMenu != true)
                     {
                         if (calculateDistance(mousePosition, backbutton.getPosition()) < closestDistance)
                         {
-                            menu = true;
+                            startMenu = true;
+                            playMenu = false;
+                            settingsMenu = false;
+                            infoMenu = false;
                         }
                     }
                 }
@@ -106,22 +130,30 @@ int main()
 
         window.draw(bg1);
 
-        if (menu == true)
+        if (startMenu)
         {          
             window.draw(closebutton);
             window.draw(playbutton);
             window.draw(settingsbutton);
             window.draw(infobutton);
         }
-        else if (menu != true)
+        else if (playMenu)
         {
             window.draw(backbutton);
             window.draw(easybutton);
             window.draw(hardbutton);
         }
-
+        else if (settingsMenu)
+        {
+            window.draw(backbutton);
+        }
+        else if (infoMenu)
+        {
+            window.draw(backbutton);
+        }
+        
         window.display();
     }
-    
+
     return 0;
 }
