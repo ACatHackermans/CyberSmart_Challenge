@@ -5,8 +5,8 @@ using namespace sf;
 
 float calculateDistance (const Vector2f& point1, const Vector2f& point2)
 {
-    float distanceX = point2.x - point1.x;
-    float distanceY = point2.y - point1.y;
+    float distanceX = point2.x - point1.x + 50;
+    float distanceY = point2.y - point1.y + 50;
     return sqrt(distanceX * distanceX + distanceY * distanceY);
 }
 void menu_button ()
@@ -17,6 +17,7 @@ void menu_button ()
 int main()
 {
     RenderWindow window(VideoMode(1920, 1080), "CyberSmart Challenge", Style::Fullscreen);
+    bool menu = true;
 
     Texture close_button, play_button, settings_button, info_button, back_button, background1;
     if (!close_button.loadFromFile("resources/close_button.png") || !play_button.loadFromFile("resources/play_button.png") 
@@ -59,10 +60,24 @@ int main()
             case Event::MouseButtonPressed:
                 if (event.mouseButton.button == Mouse::Left)
                 {
-                    float closestDistance = 50;
-                    if (calculateDistance(mousePosition, closebutton.getPosition()) < closestDistance)
-                    {
-                        return 0;
+                    if (menu == true)
+                    {    float closestDistance = 50;
+                        if (calculateDistance(mousePosition, closebutton.getPosition()) < closestDistance)
+                        {
+                            return 0;
+                        }
+                        if (calculateDistance(mousePosition, playbutton.getPosition()) < closestDistance)
+                        {
+                            menu = false;
+                        }
+                        if (calculateDistance(mousePosition, settingsbutton.getPosition()) < closestDistance)
+                        {
+                            return 0;
+                        }
+                        if (calculateDistance(mousePosition, infobutton.getPosition()) < closestDistance)
+                        {
+                            return 0;
+                        }
                     }
                 }
                     break;         
@@ -72,13 +87,19 @@ int main()
         window.clear();
 
         window.draw(bg1);
-        window.draw(closebutton);
-        window.draw(playbutton);
-        window.draw(settingsbutton);
-        window.draw(infobutton);
+        
+        if (menu == true)
+        {          
+            window.draw(closebutton);
+            window.draw(playbutton);
+            window.draw(settingsbutton);
+            window.draw(infobutton);
+        }
 
         window.display();
     }
+
+
 
     return 0;
 }
