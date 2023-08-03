@@ -9,10 +9,6 @@ float calculateDistance (const Vector2f& point1, const Vector2f& point2)
     float distanceY = point2.y - point1.y + 70;
     return sqrt(distanceX * distanceX + distanceY * distanceY);
 }
-void menu_button ()
-{
-
-}
 
 int main()
 {
